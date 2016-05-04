@@ -1,0 +1,123 @@
+﻿<script>
+ 'use strict';
+function Battleground() {
+	this.round = 1;
+	this.robots = [];
+}
+Battleground.prototype.addRobots = function(robot){
+	return this.robots.push(robot);
+}
+
+Battleground.prototype.otherRobot = function(){
+	var numbrob = Math.floor(Math.random()*(this.robots.length));
+	var otherrobot = this.robots[numbrob];
+	return otherrobot;
+}
+
+Battleground.prototype.startBatle = function(){
+	var robotsDead = 0;
+	
+	while (true){
+		for (var i = 0; i < this.robots.length; i++){
+			console.log("ROUND " + this.round);			
+			console.log (this.robots);
+				AttackingBot: while(this.robots[i].alive === false){
+					while (i !== this.robots.length - 1){
+						i++;
+						if (this.robots[i].alive === true){
+							break AttackingBot;
+						}
+					}
+					for( i = 0; i < this.robots.length; i++){
+						if (this.robots[i].alive === true){
+							break AttackingBot;
+						}
+					}
+				}			
+
+			var attackedBot = this.otherRobot();
+				
+			 while(attackedBot.alive === false || attackedBot.name === this.robots[i].name){
+				attackedBot = this.otherRobot();
+			}				
+				
+			if (this.robots[i].weapon.type == "single"){
+				attackedBot.receiveDamage(this.robots[i].attack());
+				if (attackedBot.health === 0){
+					attackedBot.alive = false;
+					robotsDead ++;
+				}
+				console.log (this.robots[i].name + " attacked " + attackedBot.name + " up to " + this.robots[i].attack() + " points");
+				console.log (attackedBot.name + " helth = " + attackedBot.health);
+				if (robotsDead === (this.robots.length - 1)){
+					return  this.robots[i].name + " WIN!!!!!";
+				}
+			}else{
+				for (var j = 0; j < this.robots.length; j++ ){
+					if (this.robots[i] != this.robots[j]){
+						if (this.robots[j].alive == false) continue;
+							else{
+								this.robots[j].receiveDamage(this.robots[i].attack());
+								if (this.robots[j].health === 0){
+									this.robots[j].alive = false;
+									robotsDead ++;
+								}
+								console.log (this.robots[i].name + " attacked " + this.robots[j].name + " up to " + this.robots[i].attack() + " points");
+								console.log (this.robots[j].name + " helth = " + this.robots[j].health);							
+								}
+								if (robotsDead === (this.robots.length - 1)){
+									return  this.robots[i].name + " WIN!!!!!";
+								}
+							}
+						}
+					}
+				this.round ++;
+		}
+	}
+}
+
+
+function Robot(name) {
+	this.name = name;
+	this.alive = true;
+	this.health = Math.floor(20 + Math.random() * (50 + 1 - 20));
+	}
+function Weapon(type, power) {
+	this.type = type;
+	this.power = power;
+}
+ function makeWeapon (){
+	var type = Math.round(Math.random()) === 0? "single" : "area";
+	var power = Math.floor(5 + Math.random() * (20 + 1 - 5));
+	return new Weapon(type, power);
+}
+
+Robot.prototype.attack = function(){
+	var points;
+	return points = this.weapon.power;
+}
+Robot.prototype.receiveDamage = function(points){
+	var healthLeft = this.health - points;
+	if (healthLeft< 0){
+		healthLeft = 0;
+	}
+	return this.health = healthLeft;
+}
+
+function makeBattle(robotCount){
+	if (robotCount < 2){
+		return console.log("The minimum number of robots must be 2!");
+	}else{
+		var bg = new Battleground;	
+		for(var i = 1; i <= robotCount; i++){
+			var robot = new Robot("Robot" + i);
+			robot.weapon = makeWeapon();
+			bg.addRobots(robot);
+		}
+	}	
+	return bg;
+}
+
+var startFight = makeBattle(50);
+console.log(startFight.startBatle());
+</script>
